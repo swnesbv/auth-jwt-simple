@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+{% block title %} Login {% endblock %}
+{% block content %}
+
+<h1 class="lead my-3">login user...</h1>
+
+{% if for_email %}
+<p>
+    <sup class="badge text-bg-danger">
+    {{ for_email }}
+    </sup>
+</p>
+{% endif %}
+{% if for_password %}
+<p>
+    <sup class="badge text-bg-danger">
+    {{ for_password }}
+    </sup>
+</p>
+ {% endif %}
+
+<form class="card" method="POST">
+    <div class="card-body">
+    <div class="mb-3">
+        <sup>email</sup>
+        <input
+            required
+            type="email"
+            name="email"
+            placeholder="email"
+            class="form-control"
+        />
+    </div>
+    <div class="mb-3">
+        <sup>password</sup>
+        <input
+            required
+            type="password"
+            name="password"
+            placeholder="password"
+            class="form-control"
+        />
+    </div>
+    </div>
+
+    <div class="card-footer">
+    <button type="submit" class="btn btn-outline-primary btn-sm">
+        submit
+    </button>
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %} index axum {% endblock title %}
+
+{% block content %}
+<h1 class="lead my-3">index axum...</h1>
+
+{% if token %}
+    <span><sup>id {{ token.id }}</sup></span>
+    <span><sup>email {{ token.email }}</sup></span>
+    <span><sup>name {{ token.username }}</sup></span>
+    <span><sup>status {{ token.status }}</sup></span>
+{% endif %}
+
+{% if i.email != "" %}
+    <p><sup>token i {{ i.email }}</sup></p>
+{% else %}
+    <p><sup>none..!</sup></p>
+{% endif %}
+
+{% if err  %}
+<span><sup>token err {{ err }}</sup></span>
+{% endif %}
+
+<p class="mt-3">
+    <a class="page-link" href="/account/users">View all users</a>
+</p>
+{% endblock %}

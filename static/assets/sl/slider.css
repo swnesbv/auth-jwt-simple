@@ -1,0 +1,357 @@
+
+/*  */
+    .bufer{
+        margin-top: 12.5vh;
+    }
+    .promo_slider{
+        width: 100%;
+        height: 66vh;
+        margin: .5em auto 0 auto;
+        position: relative;
+        overflow: hidden;
+        box-shadow: .4em .4em .4em rgb(0 0 0 / 20%);
+    }
+    .card_i{
+        width: 100%;
+        height: 100%;
+        top: 0;
+        position: absolute;
+        z-index: 0;
+        pointer-events: all;
+        background-color: #f8f9fa;
+    }
+    .card_i .content{
+        width: 33%;
+        height: 100%;
+        top: 0;
+        right: 0;
+        position: absolute;
+        z-index: 1;
+        overflow: hidden;
+        background-color: #f8f9fa;
+    }
+    .card_i img{
+        top: 0;
+        left: -100%;
+        height: 100%;
+        width: auto;
+    }
+
+/* first-of-type */
+
+    .card_i:first-of-type{
+        z-index: 3;
+    }
+    .card_i:first-of-type img{
+        position: absolute;
+        animation: left_100 1.6s ease-in forwards;
+    }
+    .card_i img.out{
+        animation: left_0 .8s ease-in forwards;
+    }
+
+/* nth-of-type(2) */
+
+    .card_i:nth-of-type(2){
+        left: -100%;
+        z-index: 3;
+    }
+
+/* text number */
+
+    .card_i:nth-of-type(2) .content .number{
+        box-shadow: none;
+    }
+    .card_i .content .number{
+        height: 6vh;
+        top: 0;
+        right: 1.44rem;
+        padding: .2em 1.4em;
+        position: absolute;
+        color: transparent;
+        font-size: 5vh;
+        z-index: 2;
+        overflow: hidden;
+        background-color: #f5f9fc33;
+        box-shadow: .2em .2em .2em #00000033;;
+    }
+    .card_i .content .number::before{
+        content: attr(data-text);
+        top: 0;
+        left: 0;
+        padding: 0 0 0 44%;
+        position: absolute;
+        color: #D0D3D6;
+        font-size: 0.8em;
+        font-weight: lighter;
+        transition: .8s linear;
+        transform: translate3d(100%,0,0);;
+    }
+    .card_i.run .content .number::before{
+        transition: .8s linear 2.4s;
+        transform: translate3d(0,0,0)
+    }
+    .card_i.active .content .number::before{
+        transition: .8s linear 2.4s;
+        transform: translate3d(0,0,0)
+    }
+    .card_i:nth-of-type(2) .content .number::before{
+        transform: translate3d(-100%,0,0);;
+    }
+
+   .item_name::first-letter{
+        padding: .1em .4em;
+        margin-right: .1em;
+        color: #6D7E8C;
+        font-weight: normal;
+        border: thin solid;
+        text-transform: capitalize;
+    }
+    .card_i .content .item_name{
+        width: 100%;
+        top: 15%;
+        padding: .5em .5em .5em 0;
+        color: #7C8999;
+        font-size: 1.6rem;
+        font-weight: lighter;
+    }
+    .card_i .content .content_text{
+        top: 30%;
+    }
+    .card_i .content .content_text{
+        padding: 0 1em 1em 0;
+    }
+    .card_i .content .item_name,
+    .card_i .content .content_text{
+        margin: 1em;
+        position: absolute;
+        overflow: hidden;
+        z-index: 1;
+    }
+    .item_name span::before{
+        content: "";
+        width: 44%;
+        height: .05rem;
+        position: absolute;
+        background-color: #A8B8BF;
+    }
+    .item_name span::before{
+        margin: 0 0 0 2em;
+    }
+
+/* run */
+
+    .card_i.active .content .item_name::before,
+    .card_i.active .content .content_text::before{
+        width: 0;
+        background-color: #fff;
+        transition: width .8s linear 3s, background-color .4s linear 3s;
+    }
+    .card_i.run .content .item_name::before,
+    .card_i.run .content .content_text::before{
+        background-color: #ffffff;
+        animation: unopen_polygon .8s linear 1 forwards 3s;
+    }
+    .card_i .content .item_name::before,
+    .card_i .content .content_text::before{
+        content: '';
+        width: 100%;
+        height: 100%;
+        top: 0;
+        right: 0;
+        z-index: 1;
+        position: absolute;
+        background-color: #f8f9fa;
+        transition: width .8s linear, background-color .4s linear 3s;
+        animation: zero .8s;
+    }
+
+/* after */
+
+    .card_i .content .item_name::after,
+    .card_i .content .content_text::after{
+        content: '';
+        width: 0;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9;
+        position: absolute;
+        background-color: #FFDC65;
+    }
+    .card_i.run .content .item_name::after,
+    .card_i.run .content .content_text::after{
+        animation: left_right 1.6s ease 1 forwards 2s;
+    }
+
+/* sld_trigger */
+
+    .sld_trigger{
+        width: 4em;
+        height: 6.66vh;
+        bottom: 1%;
+        left: calc(30% + 1em);
+        padding: 0 6.66% 0 0 ;
+        position: absolute;
+        z-index: 10;
+        cursor: pointer;
+        background-color: #d3d4d5;
+    }
+    .sld_trigger:hover{
+        background-color: #e9ecef;
+        transition: all .4s;
+    }
+    .sld_trigger:hover::before{
+        color: #212529;
+    }
+    .sld_trigger::before{
+        content: '→';
+        top: 50%;
+        left: 50%;
+        margin-top: -.1em;
+        padding: 0 33% 0 0 ;
+        position: absolute;
+        color: #fff;
+        font-size: 2em;
+        transition: .4s ease-in;
+        transform: translate(-50%, -50%);
+    }
+
+
+@media (max-width: 1024px){
+
+    .promo_slider {
+        height: 85vh;
+        box-shadow: 0 0 0;
+    }
+    .sl_content{
+        width: 100%;
+        height: 100%;
+        top: 0;
+        position: relative;
+    }
+    .card_i {
+        position: relative;
+    }
+
+/*  */
+    .card_i img,
+    .card_i .content{
+        height: 50%;
+    }
+    .card_i .content{
+        top: 50%;
+        width: 100%;
+    }
+    .card_i .content .content_text{
+        width: 80%;
+    }
+
+/*  */
+    .card_i:nth-of-type(2){
+        height: 44%;
+        top: 0;
+        left: 0;
+    }
+    .card_i:nth-of-type(2) .content .number{
+        box-shadow: none;
+    }
+    .card_i:nth-of-type(2) .content .item_name,
+    .card_i:nth-of-type(2) .content .content_text{
+        display: none;;
+    }
+
+/*  */
+    .card_i .content .item_name,
+    .card_i .content .content_text,
+    .card_i .content .publish_date{
+        left: 0;
+        padding: 1em;
+        background-color: #fff;
+        animation: translateX_100 .8s linear 1 both 2s
+    }
+    .card_i .content .item_name::before,
+    .card_i .content .content_text::before{
+        transition: none;
+    }
+    .card_i.active .content .item_name::before,
+    .card_i.active .content .content_text::before{
+        width: 100%;
+        transition: none;
+        background-color: #f8f9fa;
+        animation: unopen_polygon .8s linear 1 forwards 3s;
+    }
+
+/*  */
+    .card_i.run .content .item_name::after,
+    .card_i.run .content .content_text::after{
+        animation: left_right 1.6s linear 1 forwards 2.4s;
+    }
+
+    .sld_trigger {
+        width: 6em;
+        left: 85%;
+    }
+
+}
+
+
+/*  */
+
+    @keyframes translateX_100{
+        from{
+            transform: translateX(-100%);
+        }
+        to{
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes left_100{
+        from{
+            left: -100%;
+        }
+        to{
+            left: 0;
+        }
+    }
+    @keyframes left_0{
+        from{
+            left: 0;
+        }
+        to{
+            left: 100%;
+        }
+    }
+
+
+    @keyframes zero{
+        from{
+            width: 0;
+        }
+        to{
+            width: 100%;
+        }
+    }
+
+    @keyframes left_right{
+        50%{
+            width: 100%;
+        }
+        100%{
+            left: 100%;
+        }
+    }
+
+    @keyframes unopen_polygon{
+        from{
+            /* open polygon */
+            -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+                    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+        to{
+            /* unopen_right */
+            -webkit-clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+                    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+        }
+    }

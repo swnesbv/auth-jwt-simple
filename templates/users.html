@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %} users list {% endblock title %}
+
+{% block content %}
+
+<h1 class="lead my-3">users list...</h1>
+
+{% if token %}
+    <span><sup>id {{ token.id }}</sup></span>
+    <span><sup>email {{ token.email }}</sup></span>
+    <span><sup>name {{ token.username }}</sup></span>
+    <span><sup>status {{ token.status }}</sup></span>
+{% endif %}
+{% if err %}
+<span><sup>token err {{ err }}</sup></span>
+{% endif %}
+
+{% if users %}
+<div class="card">
+
+    <div class="card-body">
+    <ul class="list-group list-group-flush">
+    {% for i in users %}
+        <li class="list-group-item">
+        <span>{{ i.id }}</span>
+        <span class="mx-2">{{ i.username }}</span>
+        <a title="account" class="page-link account" href="/account/user/{{ i.username }}">{{ i.email }}</a>
+
+        <form method="POST">
+        <input type="hidden" name="to_user" value="{{ i.id }}" />
+        <input type="submit" value="subscribe" class="btn btn-sm btn-outline-primary mt-2">
+        </form>
+
+        </li>
+    {% endfor %}
+    </ul>
+    </div>
+
+</div>
+{% endif %}
+
+{% endblock content %}

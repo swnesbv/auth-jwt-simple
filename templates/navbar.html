@@ -1,0 +1,70 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
+    <div class="container-fluid">
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        {% include "rq_user.html" %}
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        href="#"
+                        role="button"
+                        aria-expanded="false"
+                        >&</a
+                    >
+                    <ul class="dropdown-menu">
+                        <li class="nav-item">
+                            <a title="sitemap" class="dropdown-item sitemap" href="/">home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a title="sitemap" class="dropdown-item sitemap" href="/account/users"
+                                ><sup>users</sup></a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a title="sitemap" class="dropdown-item sitemap" href="/account/nullify"
+                                ><sup>deleting session</sup></a
+                            >
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        profile
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                        <li class="bg-success-subtle">
+                            <a title="sitemap" class="dropdown-item sitemap" href="/account/login">
+                                <i class="bi bi-person"></i>
+                                <sup class="ms-2">login</sup>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+</nav>
