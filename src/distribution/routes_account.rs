@@ -10,7 +10,8 @@ use crate::{
     auth::handlers,
 };
 
-pub fn build_rt(pool: PgPool) -> Router {
+
+pub async fn build_rt(pool: PgPool) -> Router {
     let mut user_tera = Tera::default();
     user_tera
         .add_raw_templates(vec![

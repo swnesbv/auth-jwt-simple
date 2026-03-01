@@ -6,13 +6,19 @@
 <h1 class="lead my-3">users list...</h1>
 
 {% if token %}
-    <span><sup>id {{ token.id }}</sup></span>
-    <span><sup>email {{ token.email }}</sup></span>
-    <span><sup>name {{ token.username }}</sup></span>
+    <span><sup>id {{ token.id }}, </sup></span>
+    <span><sup>email {{ token.email }}, </sup></span>
+    <span><sup>name {{ token.username }}, </sup></span>
     <span><sup>status {{ token.status }}</sup></span>
 {% endif %}
 {% if err %}
 <span><sup>token err {{ err }}</sup></span>
+{% endif %}
+
+{% if i %}
+    <p><sup>i..! {{ i.email }}</sup></p>
+{% else %}
+    <p><sup>none i..!</sup></p>
 {% endif %}
 
 {% if users %}

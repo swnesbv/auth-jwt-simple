@@ -14,7 +14,7 @@ async fn main() {
     let pool = PgPool::connect(&cfg).await.unwrap();
 
     let index_router = routes_index::build_rt(pool.clone()).await;
-    let account_router = routes_account::build_rt(pool.clone());
+    let account_router = routes_account::build_rt(pool.clone()).await;
     let assets_router = routes_assets::build_rt();
 
     let app = Router::new()

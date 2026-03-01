@@ -3,11 +3,11 @@ use axum::{
     http::{request::Parts},
     http::header::{HeaderMap},
 };
+use serde::{Deserialize, Serialize};
+use std::convert::Infallible;
 
 use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds_option;
-use serde::{Deserialize, Serialize};
-use std::convert::Infallible;
 
 use crate::{
     util::date_config::date_format,
@@ -48,14 +48,14 @@ pub struct ListUser {
 
 
 #[derive(Clone, Default, Debug, Deserialize, Serialize)]
-pub struct AuUser {
+pub struct AuToken {
     pub id: i32,
     pub email: String,
     pub username: String,
     pub status: Vec<String>,
 }
 
-impl<S> OptionalFromRequestParts<S> for AuUser
+impl<S> OptionalFromRequestParts<S> for AuToken
 where
     S: FromRef<S>,
     S: Send + Sync + Clone + 'static,
@@ -68,11 +68,15 @@ where
     ) -> Result<Option<Self>, Self::Rejection> {
 
         let headers = HeaderMap::from_request_parts(parts, state)
-            .await
-            .map_err(|err| match err {})?;
-        let a = in_check(headers).await;
-        match a {
-            Ok(expr) => Ok(expr),
+            .await;
+        match headers {
+            Ok(expr) => {
+                let a = in_check(expr).await;
+                match a {
+                    Ok(expr) => Ok(expr),
+                    Err(_) => Ok(None),
+                }
+            }
             Err(_) => Ok(None),
         }
     }

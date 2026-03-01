@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-jwt-simple = { version = "0.12", default-features = false, features = ["pure-rust"] }
+jwt-simple = { version = "0.12", default-features = false, features = ["pure-rust", "jwe"] }
 tokio = { version = "1", features = ["full"] }
 axum = { version = "0.8", features = ["multipart", "ws", "original-uri", "macros"] }
 axum-extra = { version = "0.12", features = ["typed-header", "form"] }
