@@ -1,110 +1,37 @@
-use jwt_simple::prelude::*;
 use std::fs;
+use jwt_simple::prelude::*;
 use axum::{http::header::{HeaderMap, HeaderValue}};
 use sqlx::postgres::PgPool;
-// use serde_json::{json, Value};
 
-use crate::auth::models::{
-	ListUser, AuToken
+use crate::{
+    auth::models::{
+        ListUser,
+        AuToken
+    },
 };
 
-pub async fn headers_in(
-    headers: HeaderMap
-) -> Result<HeaderValue, Option<String>> {
-    match headers.get("Cookie") {
-        None => Err(None),
-        Some(expr) => Ok(expr.clone()),
-    }
-}
-
-
-pub async fn in_check(
-    headers: HeaderMap
-) -> Result<Option<AuToken>, Option<String>> {
-    match headers.get("Cookie") {
-        None => return Ok(None),
-        Some(expr) => expr,
+pub async fn a_read(
+    path: String,
+) -> Result<Vec<u8>, Option<std::io::Error>> {
+    let key = match fs::read(path) {
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err))
     };
-    let mut dialogue = String::from("");
-    let mut user = String::from("");
-    let mut path = String::from("");
-    let mut visit = String::from("");
-    let mut token = AuToken::default();
-    let mut claims: JWTClaims<AuToken>;
-
-    let s = headers.get("Cookie").unwrap().to_str().unwrap();
-    let rs = s.replace("; ", ";");
-    let a: Vec<&str> = rs.split(";").collect();
-    for i in &a {
-        if i.split("=").next() == Some("user") {
-            user.push_str(i.split("=").last().unwrap());
-            path = "./static/de_key/user/".to_string() + &user;
-        }
-    }
-    for i in &a {
-        if i.split("=").next() == Some("dialogue") {
-            dialogue.push_str(i.split("=").last().unwrap());
-            path = path + "/" + &dialogue + ".der";
-        }
-    }
-    for i in a {
-        if i.split("=").next() == Some("visit") {
-            visit.push_str(i.split("=").last().unwrap());
-            let key = &fs::read(&path).unwrap();
-            let k = RsaOaepDecryptionKey::from_der(key);
-            // claims = k.unwrap().verify_token::<AuToken>(&visit, None).unwrap();
-
-            claims = k.unwrap().decrypt_token::<AuToken>(&visit, None).unwrap();
-            token = claims.custom;
-        }
-    }
-    Ok(Some(token))
+    Ok(key.to_vec())
 }
-
-
-
-/*pub async fn in_check(
-    headers: HeaderMap
-) -> Result<Option<AuToken>, Option<String>> {
-    match headers.get("Cookie") {
-        None => return Ok(None),
-        Some(expr) => expr,
+pub async fn b_claims(
+    key: &[u8], visit: String,
+) -> Result<JWTClaims<AuToken>, Option<jwt_simple::Error>> {
+    let k = match RsaOaepDecryptionKey::from_der(key) {
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err))
     };
-    let mut dialogue = String::from("");
-    let mut user = String::from("");
-    let mut path = String::from("");
-    let mut visit = String::from("");
-    let mut token = AuToken::default();
-    let mut claims: JWTClaims<AuToken>;
-
-    let s = headers.get("Cookie").unwrap().to_str().unwrap();
-    let rs = s.replace("; ", ";");
-    let a: Vec<&str> = rs.split(";").collect();
-    for i in &a {
-        if i.split("=").next() == Some("user") {
-            user.push_str(i.split("=").last().unwrap());
-            path = "./static/public_key/user/".to_string() + &user;
-        }
-    }
-    println!(" 1 path..! {:?}", path);
-    for i in &a {
-        if i.split("=").next() == Some("dialogue") {
-            dialogue.push_str(i.split("=").last().unwrap());
-            path = path + "/" + &dialogue + ".bin";
-        }
-    }
-    println!(" 2 path..! {:?}", path);
-    for i in a {
-        if i.split("=").next() == Some("visit") {
-            visit.push_str(i.split("=").last().unwrap());
-            let key: &[u8] = &fs::read(&path).unwrap();
-            let k = ES256PublicKey::from_bytes(key);
-            claims = k.unwrap().verify_token::<AuToken>(&visit, None).unwrap();
-            token = claims.custom;
-        }
-    }
-    Ok(Some(token))
-}*/
+    let claims = match k.decrypt_token::<AuToken>(&visit, None) {
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err))
+    };
+    Ok(claims)
+}
 
 
 pub async fn cookie_check(
@@ -192,6 +119,25 @@ pub async fn read_msg(
     Ok(Some(vec))
 }
 
+pub async fn all(pool: PgPool) -> Result<Vec<ListUser>, String> {
+    let result = sqlx::query_as!(
+        ListUser,
+        "SELECT id, email, username, img, created_at, updated_at FROM users"
+    )
+    .fetch_all(&pool)
+    .await
+    .unwrap();
+    Ok(result)
+}
+pub async fn headers_in(
+    headers: HeaderMap
+) -> Result<HeaderValue, Option<String>> {
+    match headers.get("Cookie") {
+        None => Err(None),
+        Some(expr) => Ok(expr.clone()),
+    }
+}
+
 
 /*pub async fn ss_add(session: Session, email: &str) -> Json<Value> {
     let saved_int = match session.get::<String>("email").await {
@@ -218,19 +164,6 @@ pub async fn read_msg(
         "data": int
     }))
 }*/
-
-
-pub async fn all(pool: PgPool) -> Result<Vec<ListUser>, String> {
-    let result = sqlx::query_as!(
-        ListUser,
-        "SELECT id, email, username, img, created_at, updated_at FROM users"
-    )
-    .fetch_all(&pool)
-    .await
-    .unwrap();
-    Ok(result)
-}
-
 /*let mut b = String::from("");
 let n = "a";
 

@@ -8,6 +8,7 @@ use tera::Tera;
 
 use crate::{
     auth::handlers,
+    auth::accreditation,
 };
 
 
@@ -32,11 +33,12 @@ pub async fn build_rt(pool: PgPool) -> Router {
             )
             .route(
                 "/login",
-                get(handlers::get_login).post(handlers::post_login)
+                get(accreditation::get_login)
+                .post(accreditation::post_login)
             )
             // .route(
             //     "/nullify",
-            //     get(handlers::nullify)
+            //     get(accreditation::nullify)
             // )
             .layer(Extension(Arc::new(user_tera.clone())))
     );

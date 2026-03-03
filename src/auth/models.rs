@@ -5,14 +5,19 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use std::convert::Infallible;
-
 use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds_option;
 
 use crate::{
     util::date_config::date_format,
-    auth::views::{in_check},
+    auth::check::{in_check},
 };
+
+
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
+pub struct StrErr {
+    pub err: String,
+}
 
 
 #[derive(sqlx::FromRow, Debug)]
