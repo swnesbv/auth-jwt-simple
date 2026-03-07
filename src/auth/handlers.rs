@@ -18,53 +18,42 @@ use crate::{
 #[axum::debug_handler]
 pub async fn index(
 	i: Option<AuToken>,
-    headers: HeaderMap,
     Extension(templates): Extension<Templates>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
-
-	if i.is_some() {
-		println!(" token i email..! {:?}", i.clone().unwrap().email);
-	}
-
 	let mut context = Context::new();
-	let visit = in_check(headers.clone()).await;
-	match visit {
-		Ok(expr) => {
-			context.insert("i", &i);
-		    context.insert("token", &expr);
-		    Ok(Html(templates.render("index", &context).unwrap()))
-		}
-        Err(err) => {
-            context.insert("err", &err);
-            Err(Html(templates.render("index", &context).unwrap()))
-        }
-    }
+	match i {
+		Some(ref expr) => expr,
+        None => {
+        	context.insert("i_no", "Caramba bullfighting and damn it");
+        	return Err(Html(templates.render("index", &context).unwrap()))
+    	}
+    };
+	context.insert("i", &i);
+	Ok(Html(templates.render("index", &context).unwrap()))
 }
 
+#[axum::debug_handler]
 pub async fn users(
     i: Option<AuToken>,
-    State(pool): State<PgPool>,
     headers: HeaderMap,
+    State(pool): State<PgPool>,
     Extension(templates): Extension<Templates>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
 
 	if i.is_some() {
 		println!(" token i email..! {:?}", i.clone().unwrap().email);
 	}
-
-	let mut context = Context::new();
 	let visit = in_check(headers.clone()).await;
 	match visit {
-		Ok(expr) => {
-			let users = all(pool).await.unwrap();
-			context.insert("i", &i);
-		    context.insert("token", &expr);
-			context.insert("users", &users);
-		    Ok(Html(templates.render("users", &context).unwrap()))
-		}
-        Err(err) => {
-            context.insert("err", &err);
-            Err(Html(templates.render("users", &context).unwrap()))
-        }
-    }
+		Ok(ref expr) => expr,
+        Err(Some(err)) => return Err(err.to_string()),
+        Err(None) => return Err("None".to_string())
+    };
+
+	let mut context = Context::new();
+	let all_users = all(pool).await.unwrap();
+	context.insert("i", &i);
+	context.insert("visit", &visit);
+	context.insert("users", &all_users);
+	Ok(Html(templates.render("users", &context).unwrap()))
 }

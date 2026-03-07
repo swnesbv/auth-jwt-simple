@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %} register {% endblock title %}
+
+{% block content %}
+
+<h1 class="lead my-3">user register ...</h1>
+
+{% if err %}
+<p>
+    <sup class="badge text-bg-danger">
+     {{ err }}
+    </sup>
+</p>
+{% endif %}
+
+<form class="card" method="POST">
+    <div class="card-body">
+    
+    <div class="mb-3">
+        <sup>email</sup>
+        <input
+            type="email"
+            required
+            placeholder="email"
+            name="email"
+            class="form-control"
+        />
+    </div>
+    <div class="mb-3">
+        <sup>name</sup>
+        <input
+            type="text"
+            required
+            placeholder="name"
+            name="username"
+            class="form-control"
+        />
+    </div>
+    <div class="mb-3">
+        <sup>password</sup>
+        <input
+            type="password"
+            required
+            placeholder="password"
+            name="password"
+            class="form-control"
+        />
+    </div>
+    
+    </div>
+
+    <div class="card-footer">
+    <button type="submit" class="btn btn-outline-primary btn-sm">
+        submit
+    </button>
+    </div>
+</form>
+
+{% endblock content %}

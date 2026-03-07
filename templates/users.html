@@ -5,28 +5,24 @@
 
 <h1 class="lead my-3">users list...</h1>
 
-{% if token %}
-    <span><sup>id {{ token.id }}, </sup></span>
-    <span><sup>email {{ token.email }}, </sup></span>
-    <span><sup>name {{ token.username }}, </sup></span>
-    <span><sup>status {{ token.status }}</sup></span>
-{% endif %}
-{% if err %}
-<span><sup>token err {{ err }}</sup></span>
-{% endif %}
-
-{% if i %}
-    <p><sup>i..! {{ i.email }}</sup></p>
+{% if visit.id %}
+    <p>
+    <sup>id {{ visit.id }}, </sup>
+    <sup>email {{ visit.email }}, </sup>
+    <sup>name {{ visit.username }}, </sup>
+    <sup>status {{ visit.status }}</sup>
+    </p>
 {% else %}
-    <p><sup>none i..!</sup></p>
+..!
+    {% if err %}<span><sup>{{ err }}</sup></span>{% endif %}
 {% endif %}
 
-{% if users %}
+{% if all_users %}
 <div class="card">
 
     <div class="card-body">
     <ul class="list-group list-group-flush">
-    {% for i in users %}
+    {% for i in all_users %}
         <li class="list-group-item">
         <span>{{ i.id }}</span>
         <span class="mx-2">{{ i.username }}</span>

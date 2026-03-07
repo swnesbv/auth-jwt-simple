@@ -4,11 +4,26 @@ use axum::{http::header::{HeaderMap, HeaderValue}};
 use sqlx::postgres::PgPool;
 
 use crate::{
-    auth::models::{
-        ListUser,
-        AuToken
-    },
+    auth::models::{UpdateUser, ListUser, AuToken},
 };
+
+pub async fn update_details(
+    pool: PgPool, id: i32
+) -> Result<UpdateUser, Option<sqlx::Error>> {
+
+    let result = sqlx::query_as!(
+        UpdateUser,
+        "SELECT email, username, updated_at FROM users WHERE id=$1",
+        id
+    )
+    .fetch_one(&pool)
+    .await;
+    let r = match result {
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err))
+    };
+    Ok(r)
+}
 
 pub async fn a_read(
     path: String,
@@ -32,7 +47,6 @@ pub async fn b_claims(
     };
     Ok(claims)
 }
-
 
 pub async fn cookie_check(
     headers: HeaderMap

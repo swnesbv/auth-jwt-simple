@@ -4,20 +4,18 @@
 {% block content %}
 <h1 class="lead my-3">index axum...</h1>
 
-{% if token %}
-    <span><sup>id {{ token.id }}, </sup></span>
-    <span><sup>email {{ token.email }}, </sup></span>
-    <span><sup>name {{ token.username }}, </sup></span>
-    <span><sup>status {{ token.status }}</sup></span>
-{% endif %}
-{% if err %}
-<span><sup>token err {{ err }}</sup></span>
-{% endif %}
-
 {% if i %}
-    <p><sup>i..! {{ i.email }}</sup></p>
+    <p>
+    <sup>id {{ i.id }}, </sup>
+    <sup>email {{ i.email }}, </sup>
+    <sup>name {{ i.username }}, </sup>
+    <sup>status {{ i.status }}</sup>
+    </p>
 {% else %}
-    <p><sup>none i..!</sup></p>
+err..!
+    {% if err %}<span><sup>{{ err }}</sup></span>{% endif %}
+is no..!
+    {% if i_no %}<span><sup>{{ i_no }}</sup></span>{% endif %}
 {% endif %}
 
 <p class="mt-3">

@@ -1,10 +1,8 @@
-
 use axum::{http::header::{HeaderMap}};
 use crate::{
     auth::models::{AuToken},
     auth::views::{a_read, b_claims},
 };
-
 
 pub async fn in_check(
     headers: HeaderMap
@@ -26,7 +24,6 @@ pub async fn in_check(
         if i.split("=").next() == Some("user") {
             user.push_str(i.split("=").last().unwrap());
             path = "./static/de_key/user/".to_string() + &user;
-
         }
     }
     for i in &a {
@@ -40,11 +37,13 @@ pub async fn in_check(
             visit.push_str(i.split("=").last().unwrap());
             let key = match a_read(path.clone()).await {
                 Ok(expr) => expr,
-                Err(err) => return Err(Some(err.expect("REASON").to_string()))
+                Err(Some(err)) => return Err(Some(err.to_string())),
+                Err(None) => return Err(None)
             };
             let claims = match b_claims(&key, visit.clone()).await {
                 Ok(expr) => expr,
-                Err(err) => return Err(Some(err.expect("REASON").to_string()))
+                Err(Some(err)) => return Err(Some(err.to_string())),
+                Err(None) => return Err(None)
             };
             token = claims.custom;
         }

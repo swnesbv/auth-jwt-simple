@@ -1,9 +1,10 @@
-{% if token %}
-<span><sup>email {{ token.email }}</sup></span>
+{% if i %}
+<sup>{{ i.email }} </sup>
 {% else %}
-    <sup>none..!</sup>
-{% endif %}
-
-{% if err  %}
-<span><sup>token err {{ err }}</sup></span>
+    {% if is_no %}
+    <sup>{{ i_no }}</sup>
+    {% endif %}
+    {% if err %}
+    <sup>{{ err }}</sup>
+    {% endif %}
 {% endif %}
