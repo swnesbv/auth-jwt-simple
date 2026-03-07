@@ -216,20 +216,28 @@ pub async fn get_update(
     Extension(templates): Extension<Templates>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
 
-    let mut context = Context::new();
-    let a = match i {
-        Some(expr) => expr,
-        //Err(err) => return Err(err.to_string()),
-        None => return Err("None..!".to_string()),
+	let mut context = Context::new();
+	let ur = match i {
+		Some(expr) => expr,
+        None => {
+        	context.insert("i_no", "Caramba bullfighting and damn it");
+        	return Err(Html(templates.render("update", &context).unwrap()))
+    	}
     };
-    let user = update_details(pool, a.id).await;
+    let user = update_details(pool, ur.id).await;
     match user {
         Ok(user) => {
             context.insert("user", &user);
             Ok(Html(templates.render("update", &context).unwrap()))
-        },
-        Err(Some(err)) => Err(err.to_string()),
-        Err(None) => Err("invalid..!".to_string()),
+        }
+        Err(Some(err)) => {
+        	context.insert("err", &err.to_string());
+        	Err(Html(templates.render("update", &context).unwrap()))
+        }
+        Err(None) => {
+        	context.insert("i_no", "Caramba bullfighting and damn it");
+        	Err(Html(templates.render("update", &context).unwrap()))
+        }
     }
 }
 

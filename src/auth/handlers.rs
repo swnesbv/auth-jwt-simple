@@ -14,8 +14,6 @@ use crate::{
 	auth::models::{AuToken},
 };
 
-
-#[axum::debug_handler]
 pub async fn index(
 	i: Option<AuToken>,
     Extension(templates): Extension<Templates>,
@@ -32,7 +30,6 @@ pub async fn index(
 	Ok(Html(templates.render("index", &context).unwrap()))
 }
 
-#[axum::debug_handler]
 pub async fn users(
     i: Option<AuToken>,
     headers: HeaderMap,
