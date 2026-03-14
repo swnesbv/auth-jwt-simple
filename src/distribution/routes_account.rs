@@ -22,6 +22,7 @@ pub async fn build_rt(pool: PgPool) -> Router {
             ("login", include_str!("../../templates/login.html")),
             ("signup", include_str!("../../templates/signup.html")),
             ("update", include_str!("../../templates/update.html")),
+            ("i_users", include_str!("../../templates/i_users.html")),
             ("users", include_str!("../../templates/users.html")),
         ])
         .unwrap();
@@ -43,10 +44,13 @@ pub async fn build_rt(pool: PgPool) -> Router {
                 get(accreditation::get_update).post(accreditation::post_update_user),
             )
             .route(
+                "/i_users",
+                get(handlers::i_users)
+            )
+            .route(
                 "/users",
                 get(handlers::users)
             )
-
             // .route(
             //     "/nullify",
             //     get(accreditation::nullify)

@@ -20,37 +20,83 @@ pub async fn index(
 ) -> Result<impl IntoResponse, impl IntoResponse> {
 	let mut context = Context::new();
 	match i {
-		Some(ref expr) => expr,
+		Some(expr) => {
+        	context.insert("i", &expr);
+        	Ok(Html(templates.render("index", &context).unwrap()))
+		},
         None => {
-        	context.insert("i_no", "Caramba bullfighting and damn it");
-        	return Err(Html(templates.render("index", &context).unwrap()))
+        	context.insert("is_no", "Err Caramba bullfighting and damn it");
+        	Err(Html(templates.render("index", &context).unwrap()))
     	}
-    };
-	context.insert("i", &i);
-	Ok(Html(templates.render("index", &context).unwrap()))
+    }
+}
+
+pub async fn i_users(
+    i: Option<AuToken>,
+    Extension(templates): Extension<Templates>,
+) -> impl IntoResponse {
+
+	let mut context = Context::new();
+	if i.is_some() {
+		context.insert("i", &i);
+	}
+	if i.is_none() {
+    	context.insert("is_no", "None Caramba bullfighting and damn it");
+	}
+	Html(templates.render("i_users", &context).unwrap())
 }
 
 pub async fn users(
-    i: Option<AuToken>,
     headers: HeaderMap,
     State(pool): State<PgPool>,
     Extension(templates): Extension<Templates>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
 
-	if i.is_some() {
-		println!(" token i email..! {:?}", i.clone().unwrap().email);
-	}
-	let visit = in_check(headers.clone()).await;
-	match visit {
-		Ok(ref expr) => expr,
-        Err(Some(err)) => return Err(err.to_string()),
-        Err(None) => return Err("None".to_string())
-    };
-
 	let mut context = Context::new();
-	let all_users = all(pool).await.unwrap();
-	context.insert("i", &i);
-	context.insert("visit", &visit);
-	context.insert("users", &all_users);
-	Ok(Html(templates.render("users", &context).unwrap()))
+
+	// let v = in_check(headers.clone()).await;
+
+	// if v.clone().ok().is_some() {
+    // 	context.insert("visit", &v.clone().ok());
+    // 	println!(" is_ok.. {:?}", context)
+	// }
+	// if v.is_err() {
+    // 	context.insert("err", &v.clone().err());
+    // 	println!(" is_err.. {:?}", context)
+	// }
+	// if v.ok().is_none() {
+    // 	context.insert(
+    // 		"is_no", "Err-None Caramba bullfighting and damn it"
+    // 	);
+    // 	println!(" is_no.. {:?}", context)
+	// }
+
+	let _ = match in_check(headers.clone()).await {
+		Ok(expr) => {
+			context.insert("visit", &expr);
+			Ok(Html(templates.render("users", &context).unwrap()))
+		}
+        Err(Some(err)) => {
+        	context.insert("err", &err);
+        	Err(Html(templates.render("users", &context).unwrap()))
+        }
+        Err(None) => {
+        	context.insert("is_no", "Err-None Caramba bullfighting and damn it");
+        	Err(Html(templates.render("users", &context).unwrap()))
+        }
+    };
+	match all(pool).await {
+		Ok(expr) => {
+			context.insert("all_users", &expr);
+			Ok(Html(templates.render("users", &context).unwrap()))
+		}
+        Err(Some(err)) => {
+        	context.insert("err", &err.to_string());
+        	Err(Html(templates.render("users", &context).unwrap()))
+        }
+        Err(None) => {
+        	context.insert("is_no", "Err-None Caramba bullfighting and damn it");
+        	Err(Html(templates.render("users", &context).unwrap()))
+        }
+    }
 }

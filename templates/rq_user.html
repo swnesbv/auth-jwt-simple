@@ -1,10 +1,8 @@
-{% if i %}
-<sup>{{ i.email }} </sup>
+{% if i.email %}
+<sup class="badge text-bg-light">{{ i.email }} </sup>
 {% else %}
-    {% if i_no %}
-    <sup>{{ i_no }}</sup>
-    {% endif %}
     {% if err %}
-    <sup>{{ err }}</sup>
+    <sup class="badge text-bg-warning">{{ err }}</sup>
     {% endif %}
 {% endif %}
+

@@ -4,20 +4,33 @@
 {% block content %}
 <h1 class="lead my-3">index axum...</h1>
 
-{% if i %}
-    <p>
-    <sup>id {{ i.id }}, </sup>
-    <sup>email {{ i.email }}, </sup>
-    <sup>name {{ i.username }}, </sup>
-    <sup>status {{ i.status }}</sup>
+{% if i.email %}
+    <p class="alert alert-primary">
+        <span>i.. </span>
+        <sup>id</sup>
+        <sup>{{ i.id }}</sup>
+        <sup>email</sup>
+        <sup>{{ i.email }}</sup>
+        <sup>name</sup>
+        <sup>{{ i.username }}</sup>
+        <sup>status</sup>
+        <sup>{{ i.status }}</sup>
     </p>
-{% else %}
-err..!
-    {% if err %}<span><sup>{{ err }}</sup></span>{% endif %}
-is no..!
-    {% if i_no %}<span><sup>{{ i_no }}</sup></span>{% endif %}
 {% endif %}
-
+{% if err or is_no %}
+<ul class="list-group">
+    {% if err %}
+    <li class="list-group-item list-group-item-danger">
+        <sup>err {{ err }}</sup>
+    </li>
+    {% endif %}
+    {% if is_no %}
+    <li class="list-group-item list-group-item-warning">
+        <sup>is_no {{ is_no }}</sup>
+    </li>
+    {% endif %}
+</ul>
+{% endif %}
 <p class="mt-3">
     <a class="page-link" href="/account/users">View all users</a>
 </p>

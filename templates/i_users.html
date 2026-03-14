@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %} i list {% endblock title %}
+
+{% block content %}
+
+<h1 class="lead my-3">i list...</h1>
+
+{% if i %}
+    <p>
+    <span>i.. </span>
+    <sup>id {{ i.id }}, </sup>
+    <sup>email {{ i.email }}, </sup>
+    <sup>name {{ i.username }}, </sup>
+    <sup>status {{ i.status }}</sup>
+    </p>
+{% endif %}
+
+{% if err or is_no %}
+<ul class="list-group">
+    {% if err %}
+    <li class="list-group-item list-group-item-danger">
+        <sup>err {{ err }}</sup>
+    </li>
+    {% endif %}
+    {% if is_no %}
+    <li class="list-group-item list-group-item-warning">
+        <sup>is_no {{ is_no }}</sup>
+    </li>
+    {% endif %}
+</ul>
+{% endif %}
+
+{% endblock content %}

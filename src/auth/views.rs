@@ -7,23 +7,32 @@ use crate::{
     auth::models::{UpdateUser, ListUser, AuToken},
 };
 
-pub async fn update_details(
-    pool: PgPool, id: i32
-) -> Result<UpdateUser, Option<sqlx::Error>> {
 
-    let result = sqlx::query_as!(
-        UpdateUser,
-        "SELECT email, username, updated_at FROM users WHERE id=$1",
-        id
-    )
-    .fetch_one(&pool)
-    .await;
-    let r = match result {
-        Ok(expr) => expr,
-        Err(err) => return Err(Some(err))
+pub async fn some_headers(
+    headers: HeaderMap
+) -> Option<HeaderValue> {
+
+    let a = match headers.get("Cookie") {
+        Some(expr) => expr,
+        None => return None
     };
-    Ok(r)
+    Some(a.clone())
 }
+pub async fn a_check(
+    headers: HeaderMap
+) -> Result<Option<String>, Option<String>> {
+
+    let a = match some_headers(headers).await {
+        Some(expr) => expr,
+        None => return Ok(None)
+    };
+    let b = match a.to_str() {
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err.to_string())),
+    };
+    Ok(Some(b.to_string()))
+}
+
 
 pub async fn a_read(
     path: String,
@@ -47,6 +56,7 @@ pub async fn b_claims(
     };
     Ok(claims)
 }
+
 
 pub async fn cookie_check(
     headers: HeaderMap
@@ -102,8 +112,8 @@ pub async fn parse_cookie(
 ) -> Result<Option<String>, Option<String>> {
 
     let _ = match headers.get("Cookie") {
-        None => return Ok(None),
         Some(expr) => expr,
+        None => return Ok(None),
     };
     let s = headers["Cookie"].to_str().unwrap();
     let rs = s.replace("; ", ";");
@@ -133,16 +143,42 @@ pub async fn read_msg(
     Ok(Some(vec))
 }
 
-pub async fn all(pool: PgPool) -> Result<Vec<ListUser>, String> {
+pub async fn all(
+    pool: PgPool
+) -> Result<Vec<ListUser>, Option<sqlx::Error>> {
+
     let result = sqlx::query_as!(
         ListUser,
         "SELECT id, email, username, img, created_at, updated_at FROM users"
     )
     .fetch_all(&pool)
-    .await
-    .unwrap();
-    Ok(result)
+    .await;
+    let r = match result {
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err))
+    };
+    Ok(r)
 }
+
+pub async fn update_details(
+    pool: PgPool, id: i32
+) -> Result<UpdateUser, Option<sqlx::Error>> {
+
+    let result = sqlx::query_as!(
+        UpdateUser,
+        "SELECT email, username, updated_at FROM users WHERE id=$1",
+        id
+    )
+    .fetch_one(&pool)
+    .await;
+    let r = match result {
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err))
+    };
+    Ok(r)
+}
+
+
 pub async fn headers_in(
     headers: HeaderMap
 ) -> Result<HeaderValue, Option<String>> {

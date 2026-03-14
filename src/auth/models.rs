@@ -69,7 +69,7 @@ pub struct FormNewUser {
 }
 
 
-#[derive(Clone, Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize, PartialEq)]
 pub struct AuToken {
     pub id: i32,
     pub email: String,
@@ -88,16 +88,15 @@ where
         state: &S,
     ) -> Result<Option<Self>, Self::Rejection> {
         let headers = HeaderMap::from_request_parts(parts, state).await;
-        match headers {
-            Ok(expr) => {
-                let a = in_check(expr).await;
-                match a {
-                    Ok(expr) => Ok(expr),
-                    Err(Some(err)) => Err(err.clone()),
-                    Err(None) => Err("None".to_string())
-                }
-            },
-            Err(err) => Err(err.to_string())
-        }
+        let a = match headers {
+            Ok(expr) => expr
+        };
+        let b = match in_check(a).await {
+            Ok(expr) => Ok(expr),
+            Err(_) => Ok(None),
+            // Err(Some(err)) => Err(err),
+            // Err(None) => return Ok(None)
+        };
+        b
     }
 }

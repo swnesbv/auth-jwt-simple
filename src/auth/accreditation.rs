@@ -30,11 +30,14 @@ pub async fn get_login(
 	cookie: HeaderMap,
 	Extension(templates): Extension<Templates>,
 ) -> impl IntoResponse {
+
 	let msg = read_msg(cookie).await.unwrap();
+
 	let mut context = Context::new();
 	context.insert("msg", &msg.unwrap());
 	Html(templates.render("login", &context).unwrap())
 }
+
 pub async fn post_login(
 	State(pool): State<PgPool>,
 	Extension(templates): Extension<Templates>,
@@ -217,14 +220,14 @@ pub async fn get_update(
 ) -> Result<impl IntoResponse, impl IntoResponse> {
 
 	let mut context = Context::new();
-	let ur = match i {
+	let t = match i {
 		Some(expr) => expr,
         None => {
-        	context.insert("i_no", "Caramba bullfighting and damn it");
+        	context.insert("is_no", "Caramba bullfighting and damn it");
         	return Err(Html(templates.render("update", &context).unwrap()))
     	}
     };
-    let user = update_details(pool, ur.id).await;
+    let user = update_details(pool, t.id).await;
     match user {
         Ok(user) => {
             context.insert("user", &user);
@@ -235,7 +238,7 @@ pub async fn get_update(
         	Err(Html(templates.render("update", &context).unwrap()))
         }
         Err(None) => {
-        	context.insert("i_no", "Caramba bullfighting and damn it");
+        	context.insert("is_no", "Caramba bullfighting and damn it");
         	Err(Html(templates.render("update", &context).unwrap()))
         }
     }
