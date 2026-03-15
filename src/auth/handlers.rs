@@ -37,12 +37,7 @@ pub async fn i_users(
 ) -> impl IntoResponse {
 
 	let mut context = Context::new();
-	if i.is_some() {
-		context.insert("i", &i);
-	}
-	if i.is_none() {
-    	context.insert("is_no", "None Caramba bullfighting and damn it");
-	}
+	context.insert("i", &i);
 	Html(templates.render("i_users", &context).unwrap())
 }
 

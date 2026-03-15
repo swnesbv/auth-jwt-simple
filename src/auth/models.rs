@@ -88,15 +88,21 @@ where
         state: &S,
     ) -> Result<Option<Self>, Self::Rejection> {
         let headers = HeaderMap::from_request_parts(parts, state).await;
-        let a = match headers {
-            Ok(expr) => expr
-        };
-        let b = match in_check(a).await {
-            Ok(expr) => Ok(expr),
-            Err(_) => Ok(None),
-            // Err(Some(err)) => Err(err),
-            // Err(None) => return Ok(None)
-        };
-        b
+        match headers {
+            Ok(expr) => {
+                let a = in_check(expr).await;
+                match a {
+                    Ok(expr) => Ok(expr),
+                    Err(_) => Ok(None),
+                }
+            }
+        }
     }
 }
+
+/*match in_check(a).await {
+    Ok(expr) => Ok(expr),
+    Err(_) => Ok(None),
+    // Err(Some(err)) => Err(err),
+    // Err(None) => return Ok(None)
+}*/
