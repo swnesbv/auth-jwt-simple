@@ -1,11 +1,8 @@
-use std::sync::Arc;
 use std::net::{Ipv4Addr, SocketAddr};
 use tokio::net::TcpListener;
+use sqlx::PgPool;
 use axum::Router;
-use bb8_postgres::PostgresConnectionManager;
-use tokio_postgres::NoTls;
 
-use demo::common::DoubleConn;
 use demo::distribution::routes_index;
 use demo::distribution::routes_account;
 use demo::distribution::routes_assets;
@@ -13,22 +10,11 @@ use demo::distribution::routes_assets;
 #[tokio::main]
 async fn main() {
 
-    //..Postgres
     let cfg = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let manager = PostgresConnectionManager::new_from_stringlike(cfg, NoTls).unwrap();
-    let pool = bb8::Pool::builder().build(manager).await.unwrap();
-    //..Redis
-    let client = redis::Client::open("redis://localhost").unwrap();
-    let conn = bb8::Pool::builder().build(client).await.unwrap();
+    let pool = PgPool::connect(&cfg).await.unwrap();
 
-    let index_router = routes_index::build_rt(
-        Arc::new(DoubleConn{conn: conn.clone(), pool: pool.clone()})
-    ).await;
-
-    let account_router = routes_account::build_rt(
-        Arc::new(DoubleConn{conn: conn.clone(), pool: pool.clone()})
-    ).await;
-
+    let index_router = routes_index::build_rt(pool.clone()).await;
+    let account_router = routes_account::build_rt(pool.clone()).await;
     let assets_router = routes_assets::build_rt();
 
     let app = Router::new()

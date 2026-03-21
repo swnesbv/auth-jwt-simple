@@ -1,28 +1,18 @@
 use axum::{http::header::{HeaderMap}};
-use redis::AsyncCommands;
-
 use crate::{
-    common::{RedisPool},
     auth::models::{AuToken},
     auth::views::{a_read, b_claims},
 };
 
 pub async fn in_check(
-    headers: HeaderMap, conn: RedisPool
+    headers: HeaderMap
 ) -> Result<Option<AuToken>, Option<String>> {
 
+    let mut dialogue = String::from("");
+    let mut user = String::from("");
+    let mut path = String::from("");
     let mut visit = String::from("");
     let mut token = AuToken::default();
-
-    // ..Redis
-    let mut rs = match conn.get().await{
-        Ok(expr) => expr,
-        Err(err) => return Err(Some(err.to_string()))
-    };
-    let user: String = rs.get("email").await.unwrap_or("None..".to_string());
-    let dialogue: String = rs.get("key").await.unwrap_or("None..".to_string());
-    let path = "./static/de_key/user/".to_string() + &user + "/" + &dialogue + ".der";
-    // ..
 
     let a = match headers.get("Cookie") {
         Some(expr) => expr,
@@ -32,8 +22,21 @@ pub async fn in_check(
         Ok(expr) => expr.to_string(),
         Err(err) => return Err(Some(err.to_string())),
     };
+
     let rs = s.replace("; ", ";");
     let a: Vec<&str> = rs.split(";").collect();
+    for i in &a {
+        if i.split("=").next() == Some("user") {
+            user.push_str(i.split("=").last().unwrap());
+            path = "./static/de_key/user/".to_string() + &user;
+        }
+    }
+    for i in &a {
+        if i.split("=").next() == Some("dialogue") {
+            dialogue.push_str(i.split("=").last().unwrap());
+            path = path + "/" + &dialogue + ".der";
+        }
+    }
     for i in a {
         if i.split("=").next() == Some("visit") {
             visit.push_str(i.split("=").last().unwrap());

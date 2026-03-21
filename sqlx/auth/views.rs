@@ -1,12 +1,12 @@
 use std::fs;
 use jwt_simple::prelude::*;
 use axum::{http::header::{HeaderMap, HeaderValue}};
-use chrono::{DateTime, NaiveDateTime, Utc};
+use sqlx::postgres::PgPool;
 
 use crate::{
-    common::{PgPool},
-    auth::models::{ListUser, UpdateUser, AuToken},
+    auth::models::{UpdateUser, ListUser, AuToken},
 };
+
 
 pub async fn some_headers(
     headers: HeaderMap
@@ -143,48 +143,38 @@ pub async fn read_msg(
     Ok(Some(vec))
 }
 
-
 pub async fn all(
-    pool: PgPool,
-) -> Result<Vec<ListUser>, Option<String>> {
+    pool: PgPool
+) -> Result<Vec<ListUser>, Option<sqlx::Error>> {
 
-    let pg = match pool.get().await{
-        Ok(expr) => expr,
-        Err(err) => return Err(Some(err.to_string()))
-    };
-
-    let result = pg.query("SELECT id, email, username, img, created_at, updated_at FROM users;", &[])
+    let result = sqlx::query_as!(
+        ListUser,
+        "SELECT id, email, username, img, created_at, updated_at FROM users"
+    )
+    .fetch_all(&pool)
     .await;
-    let rows = match result {
+    let r = match result {
         Ok(expr) => expr,
-        Err(err) => return Err(Some(err.to_string()))
+        Err(err) => return Err(Some(err))
     };
-
-    let r: Vec<ListUser> = rows.into_iter().map(|i| ListUser {id: i.get(0), email: i.get(1), username: i.get(2), img: i.get(3), created_at: i.get(4), updated_at: i.get(5)})
-        .collect::<Vec<ListUser>>();
     Ok(r)
 }
 
 pub async fn update_details(
     pool: PgPool, id: i32
-) -> Result<UpdateUser, Option<String>> {
+) -> Result<UpdateUser, Option<sqlx::Error>> {
 
-    let pg = match pool.get().await{
-        Ok(expr) => expr,
-        Err(err) => return Err(Some(err.to_string()))
-    };
-    let result = pg.query("SELECT email, username, updated_at FROM users WHERE id=$1", &[&id])
+    let result = sqlx::query_as!(
+        UpdateUser,
+        "SELECT email, username, updated_at FROM users WHERE id=$1",
+        id
+    )
+    .fetch_one(&pool)
     .await;
-    let rows = match result {
+    let r = match result {
         Ok(expr) => expr,
-        Err(err) => return Err(Some(err.to_string()))
+        Err(err) => return Err(Some(err))
     };
-
-    let into_utc = |timestamp: NaiveDateTime| DateTime::<Utc>::from_naive_utc_and_offset(timestamp, Utc);
-    let i = &rows[0];
-    let timestamp: NaiveDateTime = i.get("updated_at");
-    let t = into_utc(timestamp);
-    let r = UpdateUser {email: i.get(0), username: i.get(1), updated_at: Some(t)};
     Ok(r)
 }
 
@@ -197,3 +187,43 @@ pub async fn headers_in(
         Some(expr) => Ok(expr.clone()),
     }
 }
+
+
+/*pub async fn ss_add(session: Session, email: &str) -> Json<Value> {
+    let saved_int = match session.get::<String>("email").await {
+        Ok(i) => i,
+        Err(error) => {
+            println!("Error getting key: {}", error);
+            None
+        }
+    };
+    println!("saved int: {:?}", saved_int);
+    let int = match saved_int {
+        Some(i) => i,
+        None => {
+            println!("Saved int not found.");
+            let new = email;
+            if let Err(error) = session.insert("email", new).await {
+                println!("Error inserting: {}", error)
+            };
+            new.to_string()
+        }
+    };
+
+    Json(json!({
+        "data": int
+    }))
+}*/
+/*let mut b = String::from("");
+let n = "a";
+
+let s = &headers["Cookie"].to_str().unwrap();
+let rs = s.replace("; ", ";");
+let a: Vec<&str> = rs.split(";").collect();
+
+for i in a {
+    if i.split("=").next() == Some(n) {
+       b.push_str(i.split("=").last().expect("REASON"))
+    }
+}
+println!("b.. {:?}", b);*/

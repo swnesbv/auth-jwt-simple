@@ -1,13 +1,13 @@
+use sqlx::postgres::PgPool;
 use std::sync::{Arc};
 use axum::{routing::get, Extension, Router};
 use tera::Tera;
 
 use crate::{
     auth::handlers,
-    common::{DoubleConn},
 };
 
-pub async fn build_rt(state: Arc<DoubleConn>) -> Router {
+pub async fn build_rt(pool: PgPool) -> Router {
     let mut base_tera = Tera::default();
     base_tera
         .add_raw_templates(vec![
@@ -18,8 +18,9 @@ pub async fn build_rt(state: Arc<DoubleConn>) -> Router {
         ])
         .unwrap();
 
+
     let index_routes = Router::new()
         .route("/", get(handlers::index))
         .layer(Extension(Arc::new(base_tera.clone())));
-    Router::new().merge(index_routes.with_state(state))
+    Router::new().merge(index_routes.with_state(pool))
 }
