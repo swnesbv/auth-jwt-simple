@@ -12,13 +12,13 @@ use crate::{
 	common::{Templates, DoubleConn},
 	auth::views::{all},
 	auth::check::{in_check},
-	auth::models::{AuToken, AuTRedis},
+	auth::models::{AuToken, AuthRedis},
 };
 
 //#[axum::debug_handler(state = (RedisPool, PgPool))]
 pub async fn index(
 	i: Option<AuToken>,
-	State(dc): State<Arc<AuTRedis>>,
+	State(dc): State<Arc<AuthRedis>>,
     Extension(templates): Extension<Templates>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
 

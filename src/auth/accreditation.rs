@@ -65,7 +65,6 @@ pub async fn post_login(
 		context.insert("for_email", "this email is not available..!");
 		return Err(Html(templates.render("login", &context).unwrap()));
 	}
-
 	let pass = pg.query_one(
 		"SELECT password FROM users WHERE email=$1;", &[&form.email]
 	)
@@ -182,7 +181,7 @@ pub async fn post_signup(
 		&[&form.email]
     )
     .await;
-    let _ =match q_email {
+    let _ = match q_email {
 		Ok(_) => {
 			context.insert("err", "email already exists..");
 			Ok(Html(templates.render("login", &context).unwrap()))
@@ -197,7 +196,7 @@ pub async fn post_signup(
         &[&form.username]
     )
     .await;
-    let _ =match q_name {
+    let _ = match q_name {
 		Ok(_) => {
 			context.insert("err", "username already exists..");
 			Ok(Html(templates.render("login", &context).unwrap()))
@@ -224,7 +223,6 @@ pub async fn post_signup(
     Ok(Redirect::to("/account/users").into_response())
 }
 
-#[axum::debug_handler]
 pub async fn get_update(
 	i: Option<AuToken>,
     State(dc): State<Arc<DoubleConn>>,

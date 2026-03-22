@@ -22,12 +22,12 @@ pub struct AuToken {
     pub status: Vec<String>,
 }
 #[derive(Clone, Debug)]
-pub struct AuTRedis {
+pub struct AuthRedis {
     pub pool: PgPool,
     pub user: AuToken,
     pub conn: RedisPool
 }
-impl AuTRedis {
+impl AuthRedis {
     pub async fn auth_redis(
         &self, headers: HeaderMap
     ) -> Result<Option<AuToken>, String> {

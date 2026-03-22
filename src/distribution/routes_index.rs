@@ -4,10 +4,10 @@ use tera::Tera;
 
 use crate::{
     auth::handlers,
-    auth::models::{AuTRedis},
+    auth::models::{AuthRedis},
 };
 
-pub async fn build_rt(state: Arc<AuTRedis>) -> Router {
+pub async fn rt(state: Arc<AuthRedis>) -> Router {
     let mut base_tera = Tera::default();
     base_tera
         .add_raw_templates(vec![

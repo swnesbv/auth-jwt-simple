@@ -3,7 +3,7 @@ use tower_http::services::{ServeDir};
 use std::{path::PathBuf};
 
 
-pub fn build_rt() -> Router {
+pub fn rt() -> Router {
 
     let assets_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("static");
     Router::new()

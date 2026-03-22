@@ -12,7 +12,7 @@ use crate::{
     common::{DoubleConn},
 };
 
-pub async fn build_rt(state: Arc<DoubleConn>) -> Router {
+pub async fn rt(state: Arc<DoubleConn>) -> Router {
     let mut user_tera = Tera::default();
     user_tera
         .add_raw_templates(vec![
