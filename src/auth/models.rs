@@ -8,7 +8,7 @@ use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds_option;
 
 use crate::{
-    common::{RedisPool},
+    common::{PgPool, RedisPool},
     auth::check::{in_check},
     util::date_config::date_format,
 };
@@ -21,6 +21,25 @@ pub struct AuToken {
     pub username: String,
     pub status: Vec<String>,
 }
+#[derive(Clone, Debug)]
+pub struct AuTRedis {
+    pub pool: PgPool,
+    pub user: AuToken,
+    pub conn: RedisPool
+}
+impl AuTRedis {
+    pub async fn auth_redis(
+        &self, headers: HeaderMap
+    ) -> Result<Option<AuToken>, String> {
+        let conn = self.conn.clone();
+        match in_check(headers, conn).await {
+            Ok(expr) => Ok(expr),
+            Err(_) => Ok(None),
+        }
+    }
+}
+
+
 impl<S> OptionalFromRequestParts<S> for AuToken
 where
     S: FromRef<S>,

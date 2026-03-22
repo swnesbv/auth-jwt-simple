@@ -5,6 +5,7 @@ use axum::Router;
 use bb8_postgres::PostgresConnectionManager;
 use tokio_postgres::NoTls;
 
+use demo::auth::models::{AuTRedis, AuToken};
 use demo::common::DoubleConn;
 use demo::distribution::routes_index;
 use demo::distribution::routes_account;
@@ -22,7 +23,7 @@ async fn main() {
     let conn = bb8::Pool::builder().build(client).await.unwrap();
 
     let index_router = routes_index::build_rt(
-        Arc::new(DoubleConn{conn: conn.clone(), pool: pool.clone()})
+        Arc::new(AuTRedis{pool: pool.clone(), user: AuToken::default(), conn: conn.clone()})
     ).await;
 
     let account_router = routes_account::build_rt(

@@ -12,13 +12,13 @@ use crate::{
 	common::{Templates, DoubleConn},
 	auth::views::{all},
 	auth::check::{in_check},
-	auth::models::{AuToken},
+	auth::models::{AuToken, AuTRedis},
 };
 
 //#[axum::debug_handler(state = (RedisPool, PgPool))]
 pub async fn index(
 	i: Option<AuToken>,
-	State(dc): State<Arc<DoubleConn>>,
+	State(dc): State<Arc<AuTRedis>>,
     Extension(templates): Extension<Templates>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
 
@@ -46,7 +46,7 @@ pub async fn index(
         	Ok(Html(templates.render("index", &context).unwrap()))
 		},
         None => {
-        	context.insert("is_no", "Err Caramba bullfighting and damn it");
+        	context.insert("is_no", "index Err Caramba bullfighting and damn it");
         	Err(Html(templates.render("index", &context).unwrap()))
     	}
     }

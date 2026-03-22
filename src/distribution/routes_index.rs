@@ -4,10 +4,10 @@ use tera::Tera;
 
 use crate::{
     auth::handlers,
-    common::{DoubleConn},
+    auth::models::{AuTRedis},
 };
 
-pub async fn build_rt(state: Arc<DoubleConn>) -> Router {
+pub async fn build_rt(state: Arc<AuTRedis>) -> Router {
     let mut base_tera = Tera::default();
     base_tera
         .add_raw_templates(vec![
