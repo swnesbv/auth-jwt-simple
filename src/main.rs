@@ -5,8 +5,7 @@ use axum::Router;
 use bb8_postgres::PostgresConnectionManager;
 use tokio_postgres::NoTls;
 
-use demo::auth::models::{AuthRedis, AuToken};
-use demo::common::DoubleConn;
+use demo::auth::models::{AuthRedis};
 use demo::distribution::routes_index;
 use demo::distribution::routes_account;
 use demo::distribution::routes_assets;
@@ -22,15 +21,12 @@ async fn main() {
     let client = redis::Client::open("redis://localhost").unwrap();
     let conn = bb8::Pool::builder().build(client).await.unwrap();
     // ..
-
-    let index_router = routes_index::rt(
-        Arc::new(AuthRedis{pool: pool.clone(), user: AuToken::default(), conn: conn.clone()})
-    ).await;
-
-    let account_router = routes_account::rt(
-        Arc::new(DoubleConn{conn: conn.clone(), pool: pool.clone()})
-    ).await;
-
+    let a = AuthRedis {
+        pool: pool.clone(),
+        conn: conn.clone()
+    };
+    let index_router = routes_index::rt(Arc::new(a.clone())).await;
+    let account_router = routes_account::rt(Arc::new(a.clone())).await;
     let assets_router = routes_assets::rt();
 
     let app = Router::new()

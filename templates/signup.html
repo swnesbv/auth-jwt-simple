@@ -5,13 +5,14 @@
 
 <h1 class="lead my-3">user register ...</h1>
 
-{% if err %}
 <p>
-    <sup class="badge text-bg-danger">
-     {{ err }}
-    </sup>
+    {% if for_email %}
+        <sup class="badge text-bg-danger">{{ for_email }}</sup>
+    {% endif %}
+    {% if for_username %}
+        <sup class="badge text-bg-danger">{{ for_username }}</sup>
+     {% endif %}
 </p>
-{% endif %}
 
 <form class="card" method="POST">
     <div class="card-body">

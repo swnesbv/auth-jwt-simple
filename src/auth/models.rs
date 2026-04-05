@@ -1,6 +1,4 @@
 use axum::{
-    extract::{FromRef, FromRequestParts, OptionalFromRequestParts},
-    http::{request::Parts},
     http::header::{HeaderMap},
 };
 use serde::{Deserialize, Serialize};
@@ -24,43 +22,16 @@ pub struct AuToken {
 #[derive(Clone, Debug)]
 pub struct AuthRedis {
     pub pool: PgPool,
-    pub user: AuToken,
     pub conn: RedisPool
 }
 impl AuthRedis {
-    pub async fn auth_redis(
+    pub async fn ctx(
         &self, headers: HeaderMap
-    ) -> Result<Option<AuToken>, String> {
+    ) -> Result<Option<AuToken>, Option<String>> {
         let conn = self.conn.clone();
-        match in_check(headers, conn).await {
+        match in_check(conn, headers).await {
             Ok(expr) => Ok(expr),
             Err(_) => Ok(None),
-        }
-    }
-}
-
-
-impl<S> OptionalFromRequestParts<S> for AuToken
-where
-    S: FromRef<S>,
-    S: Send + Sync + Clone + 'static,
-{
-    type Rejection = String;
-    async fn from_request_parts(
-        parts: &mut Parts,
-        state: &S,
-    ) -> Result<Option<Self>, Self::Rejection> {
-        let client = redis::Client::open("redis://localhost").unwrap();
-        let conn = bb8::Pool::builder().build(client).await.unwrap();
-        let headers = HeaderMap::from_request_parts(parts, state).await;
-        match headers {
-            Ok(expr) => {
-                let a = in_check(expr, conn).await;
-                match a {
-                    Ok(expr) => Ok(expr),
-                    Err(_) => Ok(None),
-                }
-            }
         }
     }
 }
@@ -117,3 +88,13 @@ pub struct FormNewUser {
     pub password: String,
 }
 
+#[derive(Clone, Default, Debug, Deserialize, Serialize, PartialEq)]
+pub struct KeyEmail {
+    pub key:   String,
+    pub email: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct FormPasswordChange {
+    pub password: String,
+}

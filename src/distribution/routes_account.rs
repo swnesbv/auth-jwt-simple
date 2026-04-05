@@ -9,10 +9,10 @@ use tera::Tera;
 use crate::{
     auth::handlers,
     auth::accreditation,
-    common::{DoubleConn},
+    auth::models::{AuthRedis},
 };
 
-pub async fn rt(state: Arc<DoubleConn>) -> Router {
+pub async fn rt(state: Arc<AuthRedis>) -> Router {
     let mut user_tera = Tera::default();
     user_tera
         .add_raw_templates(vec![
@@ -22,12 +22,15 @@ pub async fn rt(state: Arc<DoubleConn>) -> Router {
             ("login", include_str!("../../templates/login.html")),
             ("signup", include_str!("../../templates/signup.html")),
             ("update", include_str!("../../templates/update.html")),
-            ("i_users", include_str!("../../templates/i_users.html")),
             ("users", include_str!("../../templates/users.html")),
+            (
+                "password_change",
+                include_str!("../../templates/password_change.html"),
+            ),
         ])
         .unwrap();
 
-    let auth_routes = Router::new().nest(
+    let auth_routes = Router::new().without_v07_checks().nest(
         "/account",
         Router::new()
             .route(
@@ -37,19 +40,24 @@ pub async fn rt(state: Arc<DoubleConn>) -> Router {
             )
             .route(
                 "/signup",
-                get(accreditation::get_signup).post(accreditation::post_signup),
+                get(accreditation::get_signup)
+                .post(accreditation::post_signup),
             )
             .route(
                 "/update",
-                get(accreditation::get_update).post(accreditation::post_update_user),
-            )
-            .route(
-                "/i_users",
-                get(handlers::i_users)
+                get(accreditation::get_update)
+                .post(accreditation::post_update_user),
             )
             .route(
                 "/users",
                 get(handlers::users)
+            )
+            .without_v07_checks()
+            .route("/user/{name}", get(handlers::user))
+            .route(
+                "/password-change",
+                get(accreditation::get_password_change)
+                    .post(accreditation::post_password_change),
             )
             // .route(
             //     "/nullify",

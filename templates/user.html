@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %} user {% if user %} {{ user.username }}{% endif %} {% endblock title %}
+
+{% block content %}
+
+<h1 class="lead my-3">user</h1>
+
+{% if user %}
+<div class="card p-3">
+	<div class="card-header">
+	<ul class="list-group list-group-flush">
+		<li class="list-group-item">
+			<sup class="badge text-bg-light">id</sup>
+				{{ user.id }}
+			<sup class="badge text-bg-light">email</sup>
+				{{ user.email }}
+			<sup class="badge text-bg-light">username</sup>
+				{{ user.username }}
+		</li>
+		<li class="list-group-item">
+			<sup class="badge text-bg-light">created_at</sup>
+		<time>{{ user.created_at | date(format="%Y-%m-%d %H:%M:%S") }}</time>
+        {% if i.updated_at %}
+        <li class="list-group-item">
+            <sup class="badge text-bg-light">updated</sup>
+            	<time>{{ i.updated_at }}</time>
+        </li>
+        {% endif %}
+	</ul>
+	</div>
+
+	<div class="card-body mt-2">
+    <a class="btn btn-outline-primary btn-sm me-2" href="/account/update" role="button">
+        <i class="bi bi-pencil"></i> &raquo;
+    </a>
+    <a class="btn btn-outline-danger btn-sm" href="/account/delete-user" role="button">
+        <i class="bi bi-trash3"></i> &raquo;
+    </a>
+	</div>
+</div>
+
+<h2 class="lead my-2">comments</h2>
+
+<form class="card" method="POST">
+
+    <div class="card-body">
+        <input type="hidden" name="whose" value="users-{{ user.username }}" />
+        <sup class="float-start">msg</sup>
+        <input
+            class="form-control my-2"
+            type="text"
+            name="comment"
+        />
+	</div>
+
+	<div class="card-footer action-buttons">
+	<input type="submit" value="submit" class="btn btn-sm btn-outline-primary mt-2">
+	</div>
+
+</form>
+
+{% if comments %}
+<ul class="list-group list-group-flush">
+    {% for i in comments %}
+        <li class="list-group-item">
+        	<sup class="">{{ i.comment_on.name }}</sup>
+            <p>{{ i.comment_on.msg }}</p>
+        </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% endif %}
+{% endblock content %}

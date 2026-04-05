@@ -17,6 +17,13 @@
         <sup>{{ i.status }}</sup>
     </p>
 {% endif %}
+
+{% if ds %}
+<li class="list-group-item list-group-item-warning">
+    <sup>dc {{ dc }}</sup>
+</li>
+{% endif %}
+
 {% if err or is_no %}
 <ul class="list-group">
     {% if err %}

@@ -1,15 +1,7 @@
 {% extends "base.html" %}
-{% block title %} update {% if i %}{{ i.email }}{% endif %} {% endblock %}
+{% block title %} update {% if user %}{{ user.email }}{% endif %} {% endblock %}
 
 {% block content %}
-
-{% if err %}
-<p>
-    <sup class="badge text-bg-danger">
-     {{ err }}
-    </sup>
-</p>
-{% endif %}
 
 {% if user %}
 <h1 class="lead my-3">update <small>user {{ user.email }}</small></h1>
@@ -42,6 +34,11 @@
     </div>
 </form>
 
+<div class="card">
+    <div class="card-header">
+        <a href="/account/password-change">password change</a>
+    </div>
+</div>
 {% endif %}
 
 {% endblock %}

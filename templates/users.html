@@ -2,8 +2,7 @@
 {% block title %} users list {% endblock title %}
 
 {% block content %}
-
-<h1 class="lead my-3">users list...</h1>
+<h1 class="lead my-3">all users</h1>
 
 {% if visit.email %}
     <p class="alert alert-primary">
@@ -18,24 +17,17 @@
         <sup>{{ visit.status }}</sup>
     </p>
 {% endif %}
-
-{% if err or is_no %}
+{% if is_no %}
 <ul class="list-group">
-    {% if err %}
-    <li class="list-group-item list-group-item-danger">
-        <sup>err {{ err }}</sup>
-    </li>
-    {% endif %}
-    {% if is_no %}
     <li class="list-group-item list-group-item-warning">
         <sup>is_no {{ is_no }}</sup>
     </li>
-    {% endif %}
 </ul>
 {% endif %}
 
 {% if all_users %}
 <div class="card">
+
     <div class="card-body">
     <ul class="list-group list-group-flush">
     {% for i in all_users %}
@@ -43,6 +35,12 @@
         <span>{{ i.id }}</span>
         <span class="mx-2">{{ i.username }}</span>
         <a title="account" class="page-link account" href="/account/user/{{ i.username }}">{{ i.email }}</a>
+
+        <form method="POST">
+        <input type="hidden" name="to_user" value="{{ i.id }}" />
+        <input type="submit" value="subscribe" class="btn btn-sm btn-outline-primary mt-2">
+        </form>
+
         </li>
     {% endfor %}
     </ul>

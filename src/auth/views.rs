@@ -188,6 +188,36 @@ pub async fn update_details(
     Ok(r)
 }
 
+pub async fn details(
+    pool: PgPool,
+    name: String
+) -> Result<ListUser, Option<String>> {
+
+    let pg = match pool.get().await{
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err.to_string()))
+    };
+    let result = pg.query(
+        "SELECT id, email, username, img, created_at, updated_at FROM users WHERE username=$1",
+        &[&name]
+    )
+    .await;
+    let rows = match result {
+        Ok(expr) => expr,
+        Err(err) => return Err(Some(err.to_string()))
+    };
+    let i = &rows[0];
+    let r = ListUser {
+        id:         i.get(0),
+        email:      i.get(1),
+        username:   i.get(2),
+        img:        i.get(3),
+        created_at: i.get(4),
+        updated_at: i.get(5)
+    };
+    Ok(r)
+}
+
 
 pub async fn headers_in(
     headers: HeaderMap

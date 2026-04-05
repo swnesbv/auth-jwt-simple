@@ -30,11 +30,5 @@ where
     }
 }
 
-#[derive(Clone, Debug)]
-pub struct DoubleConn {
-    pub pool: PgPool,
-    pub conn: RedisPool
-}
-
 
 pub type Templates = Arc<Tera>;
